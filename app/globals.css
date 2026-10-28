@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #FAF9F6;
+  --foreground: #111113;
+  --card: #ffffff;
+  --border: rgba(17, 17, 19, 0.1);
+  --muted: #5A5A62;
+  --accent: #111113;
+  --accent-soft: rgba(230, 194, 128, 0.15);
+}
+
+.dark {
+  --background: #0F0F11;
+  --foreground: #F5F5F7;
+  --card: #1B1B1E;
+  --border: rgba(255, 255, 255, 0.08);
+  --muted: #A1A1AA;
+  --accent: #E6C280;
+  --accent-soft: rgba(230, 194, 128, 0.1);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display), serif;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  ::selection {
+    @apply bg-amber-200/70 text-slate-950;
+  }
+}
+
+@layer components {
+  .container-shell {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .panel {
+    @apply rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-gallery;
+  }
+
+  .label {
+    @apply text-[11px] font-medium uppercase tracking-[0.24em] text-[var(--muted)];
+  }
+}
