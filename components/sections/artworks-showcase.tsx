@@ -1,70 +1,23 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { X, ZoomIn } from 'lucide-react';
+import { X, ZoomIn, ZoomOut } from 'lucide-react';
 
 const categories = ['All', 'Portraits', 'Wildlife', 'Still Life', 'Fine Detail', 'Digital Works'];
 
-const works = [
-  {
-    title: 'Quiet Resolve',
-    category: 'Portraits',
-    price: '$520',
-    accent: 'from-amber-200/40 via-transparent to-transparent',
-    image:
-      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80',
-    description: 'A graphite study exploring stillness, soft shadow, and a patient gaze.',
-  },
-  {
-    title: 'The Watcher',
-    category: 'Wildlife',
-    price: '$640',
-    accent: 'from-zinc-300/40 via-transparent to-transparent',
-    image:
-      'https://images.unsplash.com/photo-1474511320723-9a56873867b5?auto=format&fit=crop&w=1200&q=80',
-    description: 'Wildlife observation built around tension, fur texture, and a disciplined eye.',
-  },
-  {
-    title: 'Paper Bloom',
-    category: 'Still Life',
-    price: '$480',
-    accent: 'from-stone-300/40 via-transparent to-transparent',
-    image:
-      'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&w=1200&q=80',
-    description: 'Still life composition balancing volume, contrast, and paper grain.',
-  },
-  {
-    title: 'Gossamer Steps',
-    category: 'Fine Detail',
-    price: '$390',
-    accent: 'from-yellow-100/40 via-transparent to-transparent',
-    image:
-      'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=1200&q=80',
-    description: 'Fine-detail exploration of texture and rhythm in a close observational study.',
-  },
-  {
-    title: 'Nocturne Signal',
-    category: 'Digital Works',
-    price: '$280',
-    accent: 'from-sky-300/30 via-transparent to-transparent',
-    image:
-      'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
-    description: 'A digital composition translated from the same graphite approach into layered light.',
-  },
-  {
-    title: 'Study in Hush',
-    category: 'Portraits',
-    price: '$610',
-    accent: 'from-orange-200/30 via-transparent to-transparent',
-    image:
-      'https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=1200&q=80',
-    description: 'Portrait practice built on soft transitions, rhythm, and tonal restraint.',
-  },
-];
+type ArtworkCard = {
+  title: string;
+  category: string;
+  price: string;
+  image: string;
+  description: string;
+};
 
-export function ArtworksShowcase() {
+export function ArtworksShowcase({ artworks = [] }: { artworks?: ArtworkCard[] }) {
   const [activeCategory, setActiveCategory] = useState('All');
-  const [selectedWork, setSelectedWork] = useState<(typeof works)[number] | null>(null);
+  const [selectedWork, setSelectedWork] = useState<ArtworkCard | null>(null);
+  const [zoomed, setZoomed] = useState(false);
+  const works: ArtworkCard[] = artworks;
 
   const filteredWorks = useMemo(() => {
     if (activeCategory === 'All') return works;
@@ -100,7 +53,7 @@ export function ArtworksShowcase() {
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {filteredWorks.map((work) => (
           <article key={work.title} className="panel overflow-hidden">
-            <div className={`relative h-80 bg-gradient-to-br ${work.accent}`}>
+            <div className="relative h-80 bg-[var(--card)]">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.22),transparent_35%)]" />
               <div className="absolute inset-5 overflow-hidden rounded-[22px] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(17,17,19,0.82),rgba(17,17,19,0.25))]">
                 <img src={work.image} alt={work.title} className="h-full w-full object-cover opacity-90" />
@@ -116,7 +69,7 @@ export function ArtworksShowcase() {
               </div>
               <button
                 type="button"
-                onClick={() => setSelectedWork(work)}
+                onClick={() => { setSelectedWork(work); setZoomed(false); }}
                 className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--border)] bg-transparent px-4 py-3 text-sm font-medium text-[var(--foreground)] transition hover:bg-[var(--accent-soft)]"
               >
                 <ZoomIn className="h-4 w-4" />
@@ -126,6 +79,8 @@ export function ArtworksShowcase() {
           </article>
         ))}
       </div>
+
+      {!filteredWorks.length && <p className="border-t border-[var(--border)] py-10 text-sm text-[var(--muted)]">New work is being prepared for the gallery.</p>}
 
       {selectedWork && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#0f0f11]/70 p-4 backdrop-blur-sm">
@@ -140,8 +95,11 @@ export function ArtworksShowcase() {
             </button>
 
             <div className="grid md:grid-cols-[1.25fr_0.75fr]">
-              <div className="relative min-h-[420px] bg-[var(--background)]">
-                <img src={selectedWork.image} alt={selectedWork.title} className="h-full w-full object-cover" />
+              <div className="group relative min-h-[420px] overflow-hidden bg-[var(--background)]">
+                <button type="button" onClick={() => setZoomed((value) => !value)} aria-label={zoomed ? 'Zoom out artwork' : 'Zoom into artwork'} aria-pressed={zoomed} className="absolute right-4 top-4 z-10 rounded-full border border-white/30 bg-black/60 p-3 text-white backdrop-blur">
+                  {zoomed ? <ZoomOut className="h-4 w-4" /> : <ZoomIn className="h-4 w-4" />}
+                </button>
+                <img src={selectedWork.image} alt={selectedWork.title} className={`h-full min-h-[420px] w-full object-contain transition-transform duration-300 ${zoomed ? 'scale-150 cursor-zoom-out' : 'cursor-zoom-in'}`} />
               </div>
               <div className="flex flex-col justify-between p-6 md:p-8">
                 <div>

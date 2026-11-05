@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { formatMoney } from '@/lib/money';
 
 const pricing = {
   graphite: { portrait: 150, pet: 190, composition: 260 },
@@ -19,7 +20,7 @@ export function CommissionsEstimator() {
   const [subject, setSubject] = useState<'portrait' | 'pet' | 'composition'>('portrait');
   const [size, setSize] = useState<'A4' | 'A3' | 'A2'>('A4');
   const [form, setForm] = useState({ name: '', email: '', details: '' });
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   const estimate = useMemo(() => {
     const base = pricing[medium][subject] ?? 180;
@@ -29,27 +30,27 @@ export function CommissionsEstimator() {
   const submitCommission = async () => {
     setStatus('loading');
 
-    const response = await fetch('/api/commissions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        customerName: form.name,
-        email: form.email,
-        subjectType: subject,
-        medium,
-        dimensions: size,
-        budgetEstimate: estimate,
-        details: form.details || 'Commission inquiry from estimator',
-      }),
-    });
+    try {
+      const response = await fetch('/api/commissions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName: form.name,
+          email: form.email,
+          subjectType: subject,
+          medium,
+          dimensions: size,
+          budgetEstimate: estimate,
+          details: form.details || 'Commission inquiry from estimator',
+        }),
+      });
 
-    if (response.ok) {
+      if (!response.ok) throw new Error('Submission failed');
       setStatus('success');
       setForm({ name: '', email: '', details: '' });
-      return;
+    } catch {
+      setStatus('error');
     }
-
-    setStatus('idle');
   };
 
   return (
@@ -114,7 +115,7 @@ export function CommissionsEstimator() {
           <div className="rounded-[28px] border border-[var(--border)] bg-[var(--card)] p-6">
             <p className="label">Estimated quote</p>
             <div className="mt-6 flex items-end gap-3">
-              <span className="text-5xl font-semibold tracking-tight">${estimate}</span>
+              <span className="text-5xl font-semibold tracking-tight">{formatMoney(estimate)}</span>
               <span className="pb-2 text-sm text-[var(--muted)]">starting from</span>
             </div>
             <p className="mt-5 text-sm leading-6 text-[var(--muted)]">
@@ -123,6 +124,7 @@ export function CommissionsEstimator() {
 
             <div className="mt-6 space-y-3">
               <input
+                required
                 value={form.name}
                 onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
                 placeholder="Your name"
@@ -130,6 +132,7 @@ export function CommissionsEstimator() {
               />
               <input
                 type="email"
+                required
                 value={form.email}
                 onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
                 placeholder="Email address"
@@ -152,6 +155,7 @@ export function CommissionsEstimator() {
             >
               {status === 'loading' ? 'Submitting…' : status === 'success' ? 'Inquiry sent' : 'Submit commission inquiry'}
             </button>
+            {status === 'error' && <p role="alert" className="mt-3 text-sm text-red-600">We could not submit your inquiry. Please try again.</p>}
           </div>
         </div>
       </div>

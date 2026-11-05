@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export function HeroSection() {
+export function HeroSection({ featuredArtwork }: { featuredArtwork?: { title: string; image: string } }) {
   return (
     <section className="container-shell grid gap-12 py-16 md:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
       <div>
@@ -39,13 +39,19 @@ export function HeroSection() {
         <div className="panel relative overflow-hidden border-[1.5px] p-4">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(230,194,128,0.22),transparent_30%)]" />
           <div className="relative overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--card)]">
-            <Image
-              src="https://images.unsplash.com/photo-1515405295579-ba7b45403062?auto=format&fit=crop&w=1200&q=80"
-              alt="Graphite portrait study"
-              width={1200}
-              height={1400}
-              className="h-[620px] w-full object-cover"
-            />
+            {featuredArtwork ? (
+              <Image
+                src={featuredArtwork.image}
+                alt={featuredArtwork.title}
+                width={1200}
+                height={1400}
+                className="h-[620px] w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-[620px] items-end bg-[linear-gradient(145deg,#e7e4dc,#f9f8f4_42%,#d1cec6)] p-8 text-[#111113]">
+                <p className="max-w-xs font-serif text-3xl leading-tight">A closer look at graphite, paper, and the human form.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

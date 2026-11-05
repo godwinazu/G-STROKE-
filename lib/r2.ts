@@ -1,24 +1,41 @@
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
-const s3 = new S3Client({
-  region: process.env.R2_REGION || 'auto',
-  endpoint: process.env.R2_ENDPOINT,
-  credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
-  },
-  forcePathStyle: true,
-});
+let client: S3Client | undefined;
 
-export async function createR2PresignedUploadUrl({ key, contentType }: { key: string; contentType: string }) {
+function getClient() {
+  if (!process.env.R2_ENDPOINT || !process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY) {
+    throw new Error('Cloudflare R2 is not configured');
+  }
+
+  client ||= new S3Client({
+    region: process.env.R2_REGION || 'auto',
+    endpoint: process.env.R2_ENDPOINT,
+    credentials: {
+      accessKeyId: process.env.R2_ACCESS_KEY_ID,
+      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+    },
+    forcePathStyle: true,
+  });
+  return client;
+}
+
+export async function createR2PresignedUploadUrl({
+  key,
+  contentType,
+  bucketName,
+}: {
+  key: string;
+  contentType: string;
+  bucketName: string;
+}) {
   const command = new PutObjectCommand({
-    Bucket: process.env.R2_BUCKET_NAME || '',
+    Bucket: bucketName,
     Key: key,
     ContentType: contentType,
   });
 
-  const url = await getSignedUrl(s3, command, { expiresIn: 60 * 10 });
+  const url = await getSignedUrl(getClient(), command, { expiresIn: 60 * 10 });
 
   return {
     url,
@@ -27,11 +44,11 @@ export async function createR2PresignedUploadUrl({ key, contentType }: { key: st
 }
 
 export async function createR2DownloadUrl(key: string, expiresIn = 60 * 60 * 24) {
-  const { GetObjectCommand } = await import('@aws-sdk/client-s3');
+  if (!process.env.R2_BUCKET_NAME) throw new Error('Private R2 bucket is not configured');
   const command = new GetObjectCommand({
-    Bucket: process.env.R2_BUCKET_NAME || '',
+    Bucket: process.env.R2_BUCKET_NAME,
     Key: key,
   });
 
-  return getSignedUrl(s3, command, { expiresIn });
+  return getSignedUrl(getClient(), command, { expiresIn });
 }

@@ -1,9 +1,29 @@
-import { pgEnum, pgTable, serial, text, timestamp, varchar, integer, boolean, decimal } from 'drizzle-orm/pg-core';
+import { pgEnum, pgTable, serial, text, timestamp, varchar, integer, boolean, decimal, jsonb } from 'drizzle-orm/pg-core';
 
 export const roleEnum = pgEnum('role', ['admin', 'customer']);
 export const orderStatusEnum = pgEnum('order_status', ['PENDING', 'PAID', 'FULFILLED']);
 export const orderTypeEnum = pgEnum('order_type', ['PHYSICAL', 'DIGITAL', 'COMMISSION']);
 export const commissionStatusEnum = pgEnum('commission_status', ['PENDING', 'APPROVED', 'IN_PROGRESS', 'COMPLETED']);
+export const shippingStatusEnum = pgEnum('shipping_status', ['NOT_REQUIRED', 'UNFULFILLED', 'PROCESSING', 'SHIPPED', 'DELIVERED']);
+
+export type OrderItemSnapshot = {
+  productId: string;
+  name: string;
+  quantity: number;
+  unitPrice: number;
+  type: 'PHYSICAL' | 'DIGITAL';
+  digitalFileKey?: string;
+  paperFinish?: 'matte' | 'satin';
+  frame?: 'none' | 'black' | 'oak';
+};
+
+export type ShippingAddress = {
+  name: string;
+  phone: string;
+  address: string;
+  city: string;
+  country: string;
+};
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -24,6 +44,8 @@ export const artworks = pgTable('artworks', {
   price: decimal('price', { precision: 10, scale: 2 }).notNull(),
   isFeatured: boolean('is_featured').notNull().default(false),
   isDigital: boolean('is_digital').notNull().default(false),
+  isVisible: boolean('is_visible').notNull().default(true),
+  archivedAt: timestamp('archived_at'),
   r2DigitalFileKey: varchar('r2_digital_file_key', { length: 500 }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
@@ -35,6 +57,12 @@ export const orders = pgTable('orders', {
   totalAmount: decimal('total_amount', { precision: 10, scale: 2 }).notNull(),
   status: orderStatusEnum('status').notNull().default('PENDING'),
   orderType: orderTypeEnum('order_type').notNull(),
+  currency: varchar('currency', { length: 3 }).notNull().default('USD'),
+  items: jsonb('items').$type<OrderItemSnapshot[]>().notNull().default([]),
+  shippingAddress: jsonb('shipping_address').$type<ShippingAddress>(),
+  shippingStatus: shippingStatusEnum('shipping_status').notNull().default('NOT_REQUIRED'),
+  downloadCount: integer('download_count').notNull().default(0),
+  digitalEmailSentAt: timestamp('digital_email_sent_at'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
