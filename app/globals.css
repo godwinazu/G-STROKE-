@@ -29,11 +29,11 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), sans-serif;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display), serif;
+  font-family: "Iowan Old Style", "Baskerville", "Times New Roman", serif;
 }
 
 @layer base {

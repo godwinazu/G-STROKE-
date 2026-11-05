@@ -13,16 +13,18 @@ type ArtworkCard = {
   description: string;
 };
 
-export function ArtworksShowcase({ artworks = [] }: { artworks?: ArtworkCard[] }) {
+const emptyArtworks: ArtworkCard[] = [];
+
+export function ArtworksShowcase({ artworks }: { artworks?: ArtworkCard[] }) {
   const [activeCategory, setActiveCategory] = useState('All');
   const [selectedWork, setSelectedWork] = useState<ArtworkCard | null>(null);
   const [zoomed, setZoomed] = useState(false);
-  const works: ArtworkCard[] = artworks;
+  const works = artworks || emptyArtworks;
 
   const filteredWorks = useMemo(() => {
     if (activeCategory === 'All') return works;
     return works.filter((work) => work.category === activeCategory);
-  }, [activeCategory]);
+  }, [activeCategory, works]);
 
   return (
     <section id="gallery" className="container-shell py-20">

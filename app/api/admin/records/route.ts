@@ -19,7 +19,10 @@ export async function PATCH(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: 'Invalid record update' }, { status: 400 });
 
   if (parsed.data.type === 'shipping') {
-    await db.update(orders).set({ shippingStatus: parsed.data.status }).where(eq(orders.id, parsed.data.id));
+    await db.update(orders).set({
+      shippingStatus: parsed.data.status,
+      ...(parsed.data.status === 'DELIVERED' ? { status: 'FULFILLED' as const } : {}),
+    }).where(eq(orders.id, parsed.data.id));
   } else {
     await db.update(commissions).set({ status: parsed.data.status }).where(eq(commissions.id, parsed.data.id));
   }

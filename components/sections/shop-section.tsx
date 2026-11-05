@@ -48,8 +48,9 @@ export function ShopSection() {
     setCart((current) => {
       const nextQty = (current[cartKey] ?? 0) + delta;
       if (nextQty <= 0) {
-        const { [cartKey]: _removed, ...rest } = current;
-        return rest;
+        const next = { ...current };
+        delete next[cartKey];
+        return next;
       }
       return { ...current, [cartKey]: nextQty };
     });

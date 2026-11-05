@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { and, desc, eq, isNull } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { artworks } from '@/lib/schema';
+import { isMissingDatabaseRelation } from '@/lib/database-errors';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,6 +35,10 @@ export async function GET() {
       note: `${product.medium} · ${product.category}`,
     })) });
   } catch (error) {
+    if (isMissingDatabaseRelation(error)) {
+      console.error('Neon schema is not initialized. Run npm run db:push against the DATABASE_URL configured in Vercel.');
+      return NextResponse.json({ products: [] });
+    }
     console.error('Public products error', error);
     return NextResponse.json({ error: 'Unable to load products' }, { status: 500 });
   }

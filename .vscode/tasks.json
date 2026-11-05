@@ -2,7 +2,35 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "Install final dependencies",
+			"label": "Verify schema fallback build",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"run",
+				"build"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Rebuild after type fix",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"run",
+				"build"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Update environment loader dependency",
 			"type": "shell",
 			"command": "npm.cmd",
 			"args": [
@@ -14,7 +42,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Final production build",
+			"label": "Final schema error build check",
 			"type": "shell",
 			"command": "npm.cmd",
 			"args": [

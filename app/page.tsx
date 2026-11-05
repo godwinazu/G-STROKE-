@@ -7,12 +7,23 @@ import { ToolsShelf } from '@/components/sections/tools-shelf';
 import { db } from '@/lib/db';
 import { artworks } from '@/lib/schema';
 import { formatMoney } from '@/lib/money';
+import { isMissingDatabaseRelation } from '@/lib/database-errors';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const publishedWorks = process.env.DATABASE_URL
-    ? await db.select({
+  let publishedWorks: {
+    title: string;
+    category: string;
+    price: string;
+    image: string;
+    description: string;
+    isFeatured: boolean;
+  }[] = [];
+
+  if (process.env.DATABASE_URL) {
+    try {
+      publishedWorks = await db.select({
         title: artworks.title,
         category: artworks.category,
         price: artworks.price,
@@ -23,7 +34,11 @@ export default async function HomePage() {
         eq(artworks.isVisible, true),
         isNull(artworks.archivedAt)
       )).orderBy(desc(artworks.createdAt))
-    : [];
+    } catch (error) {
+      if (!isMissingDatabaseRelation(error)) throw error;
+      console.error('Neon schema is not initialized. Run npm run db:push against the DATABASE_URL configured in Vercel.');
+    }
+  }
 
   return (
     <>

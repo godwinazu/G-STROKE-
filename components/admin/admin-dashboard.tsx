@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { formatMoney } from '@/lib/money';
 
@@ -74,18 +74,18 @@ export function AdminDashboard() {
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
 
-  async function loadData() {
+  const loadData = useCallback(async () => {
     const response = await fetch('/api/admin/data', { cache: 'no-store' });
     if (response.status === 401) {
       router.replace('/admin/login');
       return;
     }
     if (response.ok) setData(await response.json());
-  }
+  }, [router]);
 
   useEffect(() => {
     void loadData();
-  }, []);
+  }, [loadData]);
 
   async function uploadArtwork(event: ChangeEvent<HTMLFormElement>) {
     event.preventDefault();

@@ -21,6 +21,7 @@ The `db:push` command is for applying the current Drizzle schema. For a producti
 - `R2_PUBLIC_BASE_URL`: HTTPS custom domain or public URL serving the public image bucket, without a trailing slash.
 - `PAYSTACK_SECRET_KEY`: Paystack secret API key. Keep it server-only.
 - `PAYSTACK_CURRENCY`: currency enabled for the Paystack account, for example `USD`, `GHS`, or `NGN`.
+- `NEXT_PUBLIC_CURRENCY`: currency used to display prices in the site; keep it aligned with `PAYSTACK_CURRENCY`.
 - `NEXT_PUBLIC_APP_URL`: deployed site origin, such as `https://your-domain.com`.
 - `ADMIN_SESSION_TOKEN`: randomly generated admin login secret of at least 32 characters.
 - `RESEND_API_KEY`: Resend API key used for digital delivery messages.

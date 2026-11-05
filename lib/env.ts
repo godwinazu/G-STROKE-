@@ -4,6 +4,14 @@ const requiredEnv = [
   'R2_ACCESS_KEY_ID',
   'R2_SECRET_ACCESS_KEY',
   'R2_BUCKET_NAME',
+  'R2_PUBLIC_BUCKET_NAME',
+  'R2_PUBLIC_BASE_URL',
+  'PAYSTACK_SECRET_KEY',
+  'PAYSTACK_CURRENCY',
+  'NEXT_PUBLIC_APP_URL',
+  'ADMIN_SESSION_TOKEN',
+  'RESEND_API_KEY',
+  'EMAIL_FROM',
 ] as const;
 
 export function getRequiredEnv(name: (typeof requiredEnv)[number]) {
