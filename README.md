@@ -12,6 +12,16 @@ Portfolio, artwork storefront, commission inquiries, and studio administration f
 
 The `db:push` command is for applying the current Drizzle schema. For a production database, review the generated changes and take a backup before applying schema changes.
 
+## Fixing `relation "artworks" does not exist`
+
+This means the app can reach PostgreSQL, but the Neon database or branch selected by `DATABASE_URL` does not have the Drizzle tables yet. Set the real Neon connection string in `.env.local` (do not use the example placeholder), confirm it is the same database/branch configured in Vercel, then run:
+
+```powershell
+npm run db:push
+```
+
+The Drizzle config loads `.env.local`. After the command succeeds, verify in the Neon SQL Editor that `select to_regclass('public.artworks');` returns `artworks`, then redeploy or refresh the site. The homepage now stays available during initial setup but displays an empty portfolio until the table exists and artwork is added. Do not run `db:push` against a production database until you have confirmed the target and reviewed the schema changes.
+
 ## Environment variables
 
 - `DATABASE_URL`: Neon pooled PostgreSQL connection string. Use the pooled connection URL for Vercel functions.
