@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { SquareLoader } from '@/components/ui/square-loader';
 import { formatMoney } from '@/lib/money';
 
 const pricing = {
@@ -153,7 +154,7 @@ export function CommissionsEstimator() {
               disabled={status === 'loading'}
               className="mt-8 w-full rounded-full bg-[var(--accent)] px-5 py-3 text-sm font-medium text-white disabled:opacity-70 dark:text-[#111113]"
             >
-              {status === 'loading' ? 'Submitting…' : status === 'success' ? 'Inquiry sent' : 'Submit commission inquiry'}
+              {status === 'loading' ? <><SquareLoader compact label="Submitting commission inquiry" /> Submitting…</> : status === 'success' ? 'Inquiry sent' : 'Submit commission inquiry'}
             </button>
             {status === 'error' && <p role="alert" className="mt-3 text-sm text-red-600">We could not submit your inquiry. Please try again.</p>}
           </div>

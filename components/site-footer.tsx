@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { SocialLinks } from '@/components/social-links';
 
 export function SiteFooter() {
   return (
@@ -8,10 +9,13 @@ export function SiteFooter() {
           <p className="font-serif text-2xl">Godwin Azu</p>
           <p className="mt-2 text-sm text-[var(--muted)]">Graphite, charcoal, and fine detail works shaped with patience and observation.</p>
         </div>
-        <div className="flex items-center gap-4 text-sm text-[var(--muted)]">
-          <Link href="#gallery">Gallery</Link>
-          <Link href="#store">Store</Link>
-          <Link href="#commissions">Commissions</Link>
+        <div className="flex flex-col gap-5 md:items-end">
+          <SocialLinks />
+          <nav aria-label="Footer navigation" className="flex items-center gap-4 text-sm text-[var(--muted)]">
+            <Link href="#gallery">Gallery</Link>
+            <Link href="#store">Store</Link>
+            <Link href="#commissions">Commissions</Link>
+          </nav>
         </div>
       </div>
     </footer>

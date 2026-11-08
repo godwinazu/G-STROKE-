@@ -1,8 +1,9 @@
 'use client';
 
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { formatMoney } from '@/lib/money';
+import { EMPTY_SOCIAL_LINKS, SOCIAL_PLATFORMS, type SocialLinks } from '@/lib/social-links';
 
 type Artwork = {
   id: number;
@@ -73,19 +74,47 @@ export function AdminDashboard() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
+  const [socialLinks, setSocialLinks] = useState<SocialLinks>(EMPTY_SOCIAL_LINKS);
+  const [socialBusy, setSocialBusy] = useState(false);
+  const [socialNotice, setSocialNotice] = useState('');
 
   const loadData = useCallback(async () => {
-    const response = await fetch('/api/admin/data', { cache: 'no-store' });
+    const [response, socialResponse] = await Promise.all([
+      fetch('/api/admin/data', { cache: 'no-store' }),
+      fetch('/api/social-links', { cache: 'no-store' }),
+    ]);
     if (response.status === 401) {
       router.replace('/admin/login');
       return;
     }
     if (response.ok) setData(await response.json());
+    if (socialResponse.ok) setSocialLinks(await socialResponse.json());
   }, [router]);
 
   useEffect(() => {
     void loadData();
   }, [loadData]);
+
+  async function saveSocialLinks(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSocialBusy(true);
+    setSocialNotice('');
+    try {
+      const response = await fetch('/api/social-links', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(socialLinks),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Unable to save social links.');
+      setSocialLinks(result.socialLinks);
+      setSocialNotice('Social links saved.');
+    } catch (error) {
+      setSocialNotice(error instanceof Error ? error.message : 'Unable to save social links.');
+    } finally {
+      setSocialBusy(false);
+    }
+  }
 
   async function uploadArtwork(event: ChangeEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -234,6 +263,33 @@ export function AdminDashboard() {
                 {!data.analytics.topSelling.length && <li className="text-sm text-[var(--muted)]">Sales will appear here.</li>}
               </ol>
             </div>
+          </section>
+
+          <section className="panel mt-8 p-6">
+            <p className="label">Social profile links</p>
+            <form onSubmit={saveSocialLinks} className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {SOCIAL_PLATFORMS.map((platform) => (
+                <label key={platform.id} htmlFor={`social-${platform.id}`} className="text-sm font-medium">
+                  {platform.label}
+                  <input
+                    id={`social-${platform.id}`}
+                    type="url"
+                    value={socialLinks[platform.id]}
+                    onChange={(event) => setSocialLinks((current) => ({ ...current, [platform.id]: event.target.value }))}
+                    placeholder={`https://${platform.id === 'x' ? 'x.com' : `${platform.id}.com`}/your-profile`}
+                    className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm font-normal"
+                  />
+                </label>
+              ))}
+              <button
+                type="submit"
+                disabled={socialBusy}
+                className="rounded-full bg-[var(--accent)] px-5 py-3 text-sm font-medium text-white disabled:opacity-60 dark:text-[#111113] sm:col-span-2 lg:col-span-3"
+              >
+                {socialBusy ? 'Saving links…' : 'Save social links'}
+              </button>
+            </form>
+            {socialNotice && <p aria-live="polite" className="mt-3 text-sm text-[var(--muted)]">{socialNotice}</p>}
           </section>
 
           <section className="panel mt-8 p-6">

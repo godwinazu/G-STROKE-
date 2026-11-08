@@ -10,6 +10,8 @@ Portfolio, artwork storefront, commission inquiries, and studio administration f
 4. Apply the schema to Neon with `npm run db:push`.
 5. Start the app with `npm run dev`.
 
+Social profile URLs are managed in `/admin` and stored in the `site_settings` table. After pulling schema changes, run `npm run db:push` before using the social links editor.
+
 The `db:push` command is for applying the current Drizzle schema. For a production database, review the generated changes and take a backup before applying schema changes.
 
 ## Fixing `relation "artworks" does not exist`

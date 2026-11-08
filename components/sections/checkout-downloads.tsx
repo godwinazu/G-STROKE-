@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Download } from 'lucide-react';
 
 type Download = { name: string; url: string };
 
@@ -35,7 +36,11 @@ export function CheckoutDownloads({ reference }: { reference: string }) {
         <ul className="mt-8 space-y-3">
           {downloads.map((download) => (
             <li key={download.name}>
-              <a className="inline-flex rounded-full bg-[var(--accent)] px-5 py-3 text-sm font-medium text-white dark:text-[#111113]" href={download.url}>
+              <a
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-6 py-3 text-sm font-medium text-white shadow-[0_0.7em_1.5em_-0.5em_var(--accent)] transition-shadow hover:shadow-[0_0.5em_1.5em_-0.5em_var(--accent)] active:shadow-[0_0.3em_1em_-0.5em_var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
+                href={download.url}
+              >
+                <Download aria-hidden="true" className="h-4 w-4" />
                 Download {download.name}
               </a>
             </li>

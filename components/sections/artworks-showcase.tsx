@@ -54,11 +54,12 @@ export function ArtworksShowcase({ artworks }: { artworks?: ArtworkCard[] }) {
 
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {filteredWorks.map((work) => (
-          <article key={work.title} className="panel overflow-hidden">
-            <div className="relative h-80 bg-[var(--card)]">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.22),transparent_35%)]" />
-              <div className="absolute inset-5 overflow-hidden rounded-[22px] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(17,17,19,0.82),rgba(17,17,19,0.25))]">
-                <img src={work.image} alt={work.title} className="h-full w-full object-cover opacity-90" />
+          <article key={work.title} className="panel">
+            <div className="relative flex h-80 items-center justify-center bg-[var(--card)]">
+              <div className="gallery-artwork-stack">
+                <div className="gallery-artwork-card">
+                  <img src={work.image} alt={work.title} className="gallery-artwork-image" />
+                </div>
               </div>
             </div>
             <div className="space-y-4 p-5">

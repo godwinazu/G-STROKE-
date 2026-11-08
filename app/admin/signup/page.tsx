@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { SquareLoader } from '@/components/ui/square-loader';
 
 export default function AdminSignupPage() {
   const [email, setEmail] = useState('');
@@ -75,7 +76,7 @@ export default function AdminSignupPage() {
           disabled={loading}
           className="w-full bg-black dark:bg-white text-white dark:text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
-          {loading ? 'Signing up...' : 'Sign Up'}
+          {loading ? <><SquareLoader compact label="Creating admin account" /> Signing up...</> : 'Sign Up'}
         </button>
       </form>
     </div>

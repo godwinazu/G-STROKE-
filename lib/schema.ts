@@ -1,5 +1,6 @@
 import { pgEnum, pgTable, serial, text, timestamp, varchar, integer, boolean, decimal, jsonb, uniqueIndex } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
+import { EMPTY_SOCIAL_LINKS, type SocialLinks } from '@/lib/social-links';
 
 export const roleEnum = pgEnum('role', ['admin', 'customer']);
 export const orderStatusEnum = pgEnum('order_status', ['PENDING', 'PAID', 'FULFILLED']);
@@ -50,6 +51,12 @@ export const artworks = pgTable('artworks', {
   archivedAt: timestamp('archived_at'),
   r2DigitalFileKey: varchar('r2_digital_file_key', { length: 500 }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+export const siteSettings = pgTable('site_settings', {
+  id: integer('id').primaryKey(),
+  socialLinks: jsonb('social_links').$type<SocialLinks>().notNull().default(EMPTY_SOCIAL_LINKS),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
 export const orders = pgTable('orders', {

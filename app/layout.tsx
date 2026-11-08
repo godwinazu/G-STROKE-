@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { ThemeProvider } from '@/components/providers/theme-provider';
+import { SiteBackground } from '@/components/site-background';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 
@@ -17,7 +18,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body className="bg-background text-foreground antialiased">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(230,194,128,0.12),transparent_30%)]">
+          <div className="site-shell">
+            <SiteBackground />
             <SiteHeader />
             <main>{children}</main>
             <SiteFooter />

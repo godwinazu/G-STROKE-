@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Minus, Plus, ShoppingBag, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { SquareLoader } from '@/components/ui/square-loader';
 import { formatMoney } from '@/lib/money';
 
 type Product = { id: string; name: string; type: 'Physical' | 'Digital'; price: number; note: string; imageUrl: string };
@@ -11,6 +12,7 @@ type CartEntry = Product & Options & { quantity: number; cartKey: string; unitPr
 
 export function ShopSection() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [productsLoading, setProductsLoading] = useState(true);
   const [cart, setCart] = useState<Record<string, number>>({});
   const [productOptions, setProductOptions] = useState<Record<string, Options>>({});
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -26,7 +28,8 @@ export function ShopSection() {
         const result = await response.json();
         setProducts(result.products);
       })
-      .catch(() => setProducts([]));
+      .catch(() => setProducts([]))
+      .finally(() => setProductsLoading(false));
   }, []);
 
   const entries = useMemo(() => Object.entries(cart).flatMap(([cartKey, quantity]): CartEntry[] => {
@@ -118,7 +121,11 @@ export function ShopSection() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
-          {products.map((product) => (
+          {productsLoading ? (
+            <div className="col-span-full flex justify-center py-16">
+              <SquareLoader label="Loading products" />
+            </div>
+          ) : products.map((product) => (
             <article key={product.id} className="panel p-6">
               <img src={product.imageUrl} alt={product.name} className="mb-5 h-52 w-full rounded-xl object-cover" />
               <div className="mb-5 flex items-center justify-between gap-3">
@@ -144,7 +151,7 @@ export function ShopSection() {
               </Button>
             </article>
           ))}
-          {!products.length && <p className="text-sm text-[var(--muted)]">New works are being prepared for the shop.</p>}
+          {!productsLoading && !products.length && <p className="text-sm text-[var(--muted)]">New works are being prepared for the shop.</p>}
         </div>
       </div>
 
@@ -213,7 +220,7 @@ export function ShopSection() {
               </div>
               {checkoutError && <p role="alert" className="mb-3 text-sm text-red-600">{checkoutError}</p>}
               <Button onClick={checkout} disabled={!entries.length || !email || checkoutState === 'loading' || (hasPhysicalItem && Object.values(shipping).some((value) => !value.trim()))} className="w-full">
-                {checkoutState === 'loading' ? 'Preparing checkout…' : 'Continue to Paystack'}
+                {checkoutState === 'loading' ? <><SquareLoader compact label="Preparing checkout" /> Preparing checkout…</> : 'Continue to Paystack'}
               </Button>
             </div>
           </div>
