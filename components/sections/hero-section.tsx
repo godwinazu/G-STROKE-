@@ -30,6 +30,9 @@ export function HeroSection({ featuredArtwork }: { featuredArtwork?: { title: st
           <Button asChild variant="outline">
             <Link href="/commissions">Book a commission</Link>
           </Button>
+          <Button asChild variant="outline">
+            <Link href="/store">Shop originals</Link>
+          </Button>
         </div>
         <div className="mt-8 grid max-w-xl gap-6 sm:grid-cols-3">
           {[{ value: '12+', label: 'Years of drawing' }, { value: '84', label: 'Featured works' }, { value: '4.9', label: 'Collector rating' }].map((item) => (

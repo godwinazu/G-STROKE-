@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: 'Enter a valid email and password' }, { status: 400 });
 
   if (!areAdminCredentialsConfigured()) {
-    return NextResponse.json({ error: 'Admin email and password are not configured on the server.' }, { status: 503 });
+    return NextResponse.json({ error: 'Admin login requires valid ADMIN_EMAIL, ADMIN_PASSWORD, and ADMIN_SESSION_SECRET server settings.' }, { status: 503 });
   }
 
   if (!verifyAdminCredentials(parsed.data.email, parsed.data.password)) {

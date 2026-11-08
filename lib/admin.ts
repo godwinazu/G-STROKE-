@@ -18,7 +18,7 @@ function secureStringEqual(value: string, expected: string) {
 }
 
 export function areAdminCredentialsConfigured() {
-  return configuredAdminCredentials() !== null;
+  return configuredAdminCredentials() !== null && (process.env.ADMIN_SESSION_SECRET?.length ?? 0) >= 32;
 }
 
 export function verifyAdminCredentials(email: string, password: string) {

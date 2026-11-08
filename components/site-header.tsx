@@ -2,9 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { MoonStar, SunMedium } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { Button } from '@/components/ui/button';
 
 const navItems = [
   { href: '/gallery', label: 'Gallery' },
@@ -14,7 +11,6 @@ const navItems = [
 ];
 
 export function SiteHeader() {
-  const { theme, setTheme } = useTheme();
   const [navOpen, setNavOpen] = useState(false);
 
   return (
@@ -49,14 +45,6 @@ export function SiteHeader() {
           <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></svg>
         </button>
 
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
-            {theme === 'dark' ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
-          </Button>
-          <Button asChild>
-            <Link href="/store">Shop originals</Link>
-          </Button>
-        </div>
       </div>
       {/* Mobile nav menu */}
       {navOpen && (
