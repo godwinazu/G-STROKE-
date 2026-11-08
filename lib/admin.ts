@@ -7,7 +7,7 @@ const SESSION_DURATION_SECONDS = 60 * 60 * 12;
 function configuredAdminCredentials() {
   const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
   const password = process.env.ADMIN_PASSWORD;
-  if (!email || !password || password.length < 12) return null;
+  if (!email || !password || password.length < 8) return null;
   return { email, password };
 }
 
@@ -19,6 +19,21 @@ function secureStringEqual(value: string, expected: string) {
 
 export function areAdminCredentialsConfigured() {
   return configuredAdminCredentials() !== null && (process.env.ADMIN_SESSION_SECRET?.length ?? 0) >= 32;
+}
+
+export function getAdminConfigurationIssues() {
+  const issues: string[] = [];
+  const email = process.env.ADMIN_EMAIL?.trim();
+  const password = process.env.ADMIN_PASSWORD;
+  const sessionSecret = process.env.ADMIN_SESSION_SECRET;
+
+  if (!email) issues.push('ADMIN_EMAIL is missing.');
+  if (!password) issues.push('ADMIN_PASSWORD is missing.');
+  else if (password.length < 8) issues.push('ADMIN_PASSWORD must be at least 8 characters.');
+  if (!sessionSecret) issues.push('ADMIN_SESSION_SECRET is missing.');
+  else if (sessionSecret.length < 32) issues.push('ADMIN_SESSION_SECRET must be at least 32 characters.');
+
+  return issues;
 }
 
 export function verifyAdminCredentials(email: string, password: string) {

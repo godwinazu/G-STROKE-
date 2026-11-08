@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { ADMIN_COOKIE_NAME, areAdminCredentialsConfigured, createAdminSession, verifyAdminCredentials } from '@/lib/admin';
+import { ADMIN_COOKIE_NAME, areAdminCredentialsConfigured, createAdminSession, getAdminConfigurationIssues, verifyAdminCredentials } from '@/lib/admin';
 
 export async function POST(request: Request) {
   const parsed = z.object({ email: z.string().email().max(255), password: z.string().min(1).max(1024) })
@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: 'Enter a valid email and password' }, { status: 400 });
 
   if (!areAdminCredentialsConfigured()) {
-    return NextResponse.json({ error: 'Admin login requires valid ADMIN_EMAIL, ADMIN_PASSWORD, and ADMIN_SESSION_SECRET server settings.' }, { status: 503 });
+    return NextResponse.json({ error: getAdminConfigurationIssues().join(' ') }, { status: 503 });
   }
 
   if (!verifyAdminCredentials(parsed.data.email, parsed.data.password)) {

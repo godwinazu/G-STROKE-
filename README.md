@@ -36,7 +36,7 @@ The Drizzle config loads `.env.local`. After the command succeeds, verify in the
 - `NEXT_PUBLIC_CURRENCY`: currency used to display prices in the site; keep it aligned with `PAYSTACK_CURRENCY`.
 - `NEXT_PUBLIC_APP_URL`: deployed site origin, such as `https://your-domain.com`.
 - `ADMIN_EMAIL`: admin email used to sign in to `/admin/login`.
-- `ADMIN_PASSWORD`: admin password, at least 12 characters. Store it only in `.env.local` or your deployment's encrypted environment variables.
+- `ADMIN_PASSWORD`: admin password, at least 8 characters. Store it only in `.env.local` or your deployment's encrypted environment variables.
 - `ADMIN_SESSION_SECRET`: randomly generated admin session signing secret of at least 32 characters.
 - `RESEND_API_KEY`: Resend API key used for digital delivery messages.
 - `EMAIL_FROM`: verified sender identity in Resend, for example `Studio <orders@your-domain.com>`.
@@ -59,7 +59,7 @@ The webhook validates the HMAC signature and verifies that the received amount a
 
 ## Admin
 
-Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env.local` or your deployment's environment variables, then visit `/admin/login`. The password must be at least 12 characters. `/admin/signup` redirects to the login page because admin credentials are managed only through the server environment.
+Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env.local` or your deployment's environment variables, then visit `/admin/login`. The password must be at least 8 characters. `/admin/signup` redirects to the login page because admin credentials are managed only through the server environment.
 
 Successful sign-in creates an HttpOnly, Secure-in-production, SameSite=Strict session cookie for 12 hours. Admin APIs independently verify the session. Rotate `ADMIN_SESSION_SECRET` to invalidate existing sessions.
 
