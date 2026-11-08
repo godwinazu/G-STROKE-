@@ -1,5 +1,6 @@
+import { timingSafeEqual } from 'node:crypto';
 import { NextResponse } from 'next/server';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { users } from '@/lib/schema';
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
 
   const supplied = Buffer.from(parsed.data.signupKey);
   const expected = Buffer.from(expectedKey);
-  if (supplied.length !== expected.length || !require('crypto').timingSafeEqual(supplied, expected)) {
+  if (supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) {
     return NextResponse.json({ error: 'Invalid signup details.' }, { status: 401 });
   }
 
