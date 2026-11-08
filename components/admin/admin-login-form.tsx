@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 
 export function AdminLoginForm() {
   const router = useRouter();
-  const [token, setToken] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -14,20 +15,26 @@ export function AdminLoginForm() {
     setSubmitting(true);
     setError('');
 
-    const response = await fetch('/api/admin/session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
-    });
+    try {
+      const response = await fetch('/api/admin/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (!response.ok) {
-      setError('The admin token was not accepted.');
+      if (!response.ok) {
+        const result = await response.json().catch(() => null);
+        setError(result?.error || 'Unable to sign in with those credentials.');
+        return;
+      }
+
+      router.replace('/admin');
+      router.refresh();
+    } catch {
+      setError('Unable to reach the sign-in service. Please try again.');
+    } finally {
       setSubmitting(false);
-      return;
     }
-
-    router.replace('/admin');
-    router.refresh();
   }
 
   return (
@@ -37,13 +44,24 @@ export function AdminLoginForm() {
         <h1 className="mt-2 text-3xl">Admin sign in</h1>
       </div>
       <label className="block text-sm">
-        Admin token
+        Email address
+        <input
+          type="email"
+          autoComplete="username"
+          required
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 outline-none focus:border-[var(--accent)]"
+        />
+      </label>
+      <label className="block text-sm">
+        Password
         <input
           type="password"
           autoComplete="current-password"
           required
-          value={token}
-          onChange={(event) => setToken(event.target.value)}
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
           className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 outline-none focus:border-[var(--accent)]"
         />
       </label>
