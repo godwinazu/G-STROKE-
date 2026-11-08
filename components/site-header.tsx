@@ -7,10 +7,10 @@ import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
-  { href: '#gallery', label: 'Gallery' },
-  { href: '#store', label: 'Store' },
-  { href: '#commissions', label: 'Commissions' },
-  { href: '#about', label: 'About' },
+  { href: '/gallery', label: 'Gallery' },
+  { href: '/store', label: 'Store' },
+  { href: '/commissions', label: 'Commissions' },
+  { href: '/about', label: 'About' },
 ];
 
 export function SiteHeader() {
@@ -54,7 +54,7 @@ export function SiteHeader() {
             {theme === 'dark' ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
           </Button>
           <Button asChild>
-            <Link href="#store">Shop originals</Link>
+            <Link href="/store">Shop originals</Link>
           </Button>
         </div>
       </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -20,11 +21,15 @@ export function HeroSection({ featuredArtwork }: { featuredArtwork?: { title: st
           Godwin Azu creates graphite studies and original works that balance realism, emotion, and tactile paper grain. Each composition is built with patience, observation, and a belief in the power of subtle detail.
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
-          <Button>
-            View selected works
-            <ArrowRight className="ml-2 h-4 w-4" />
+          <Button asChild>
+            <Link href="/gallery">
+              View selected works
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </Button>
-          <Button variant="outline">Book a commission</Button>
+          <Button asChild variant="outline">
+            <Link href="/commissions">Book a commission</Link>
+          </Button>
         </div>
         <div className="mt-8 grid max-w-xl gap-6 sm:grid-cols-3">
           {[{ value: '12+', label: 'Years of drawing' }, { value: '84', label: 'Featured works' }, { value: '4.9', label: 'Collector rating' }].map((item) => (
