@@ -14,6 +14,7 @@ const navItems = [
 
 export function SiteHeader() {
   const { theme, setTheme } = useTheme();
+  const [navOpen, setNavOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[color:var(--background)]/80 backdrop-blur-xl">
@@ -28,6 +29,7 @@ export function SiteHeader() {
           </div>
         </Link>
 
+        {/* Desktop nav */}
         <nav className="hidden items-center gap-8 md:flex">
           {navItems.map((item) => (
             <Link key={item.href} href={item.href} className="text-sm text-[var(--muted)] transition hover:text-[var(--foreground)]">
@@ -35,6 +37,16 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
+
+        {/* Mobile nav toggle */}
+        <button
+          className="md:hidden flex items-center px-2 py-1 border rounded text-[var(--muted)]"
+          aria-label="Open navigation"
+          onClick={() => setNavOpen((v) => !v)}
+        >
+          <span className="sr-only">Menu</span>
+          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></svg>
+        </button>
 
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
@@ -45,6 +57,23 @@ export function SiteHeader() {
           </Button>
         </div>
       </div>
+      {/* Mobile nav menu */}
+      {navOpen && (
+        <nav className="md:hidden absolute left-0 right-0 top-20 bg-[color:var(--background)] border-b border-[var(--border)] shadow-lg z-40">
+          <div className="flex flex-col items-start gap-2 p-4">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="w-full py-2 text-base text-[var(--muted)] hover:text-[var(--foreground)]"
+                onClick={() => setNavOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </nav>
+      )}
     </header>
   );
 }

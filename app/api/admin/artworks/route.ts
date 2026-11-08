@@ -20,7 +20,7 @@ const artworkSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  if (!isAdminCookieHeader(request.headers.get('cookie'))) {
+  if (!(await isAdminCookieHeader(request.headers.get('cookie')))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  if (!isAdminCookieHeader(request.headers.get('cookie'))) {
+  if (!(await isAdminCookieHeader(request.headers.get('cookie')))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

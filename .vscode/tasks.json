@@ -1,0 +1,92 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Verify Next.js production build",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"run",
+				"build"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Clean Next.js build cache",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Remove-Item -Recurse -Force .next; Write-Output 'NEXT_CACHE_CLEARED'"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Build Next.js from clean cache",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"run",
+				"build"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Locate Next template invariant",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"findstr /s /n /c:VAR_ORIGINAL_PATHNAME node_modules\\next\\dist\\*.js"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Find Next entrypoint loader",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"findstr /s /n /c:\"Expected to replace all template variables\" node_modules\\next\\dist\\*.js"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Find Next template assertion",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"findstr /s /n /c:\"Expected to replace all template variables\" node_modules\\next\\dist\\build\\*.js"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Install pinned Next.js",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"install",
+				"--no-audit",
+				"--no-fund"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}

@@ -33,7 +33,8 @@ The Drizzle config loads `.env.local`. After the command succeeds, verify in the
 - `PAYSTACK_CURRENCY`: currency enabled for the Paystack account, for example `USD`, `GHS`, or `NGN`.
 - `NEXT_PUBLIC_CURRENCY`: currency used to display prices in the site; keep it aligned with `PAYSTACK_CURRENCY`.
 - `NEXT_PUBLIC_APP_URL`: deployed site origin, such as `https://your-domain.com`.
-- `ADMIN_SESSION_TOKEN`: randomly generated admin login secret of at least 32 characters.
+- `ADMIN_SIGNUP_KEY`: invite key required for the first admin signup (set this to a strong random value, share only with the intended admin).
+- `ADMIN_SESSION_SECRET`: randomly generated admin session signing secret of at least 32 characters.
 - `RESEND_API_KEY`: Resend API key used for digital delivery messages.
 - `EMAIL_FROM`: verified sender identity in Resend, for example `Studio <orders@your-domain.com>`.
 

@@ -1,18 +1,57 @@
-import { timingSafeEqual } from 'crypto';
+import { createHmac, randomBytes, scrypt as scryptCallback, timingSafeEqual } from 'crypto';
 import { cookies } from 'next/headers';
+import { promisify } from 'util';
 
 export const ADMIN_COOKIE_NAME = 'gstroke_admin_session';
+const SESSION_DURATION_SECONDS = 60 * 60 * 12;
+const scrypt = promisify(scryptCallback) as (password: string, salt: string, keyLength: number) => Promise<Buffer>;
 
-export function isValidAdminToken(token: string | undefined) {
-  const expected = process.env.ADMIN_SESSION_TOKEN;
-  if (!token || !expected || expected.length < 32) return false;
-
-  const providedBuffer = Buffer.from(token);
-  const expectedBuffer = Buffer.from(expected);
-  return providedBuffer.length === expectedBuffer.length && timingSafeEqual(providedBuffer, expectedBuffer);
+function sessionSecret() {
+  const secret = process.env.ADMIN_SESSION_SECRET;
+  if (!secret || secret.length < 32) throw new Error('ADMIN_SESSION_SECRET must be at least 32 characters');
+  return secret;
 }
 
-export function isAdminCookieHeader(cookieHeader: string | null) {
+export async function hashAdminPassword(password: string) {
+  const salt = randomBytes(16).toString('hex');
+  const hash = await scrypt(password, salt, 64);
+  return `${salt}:${hash.toString('hex')}`;
+}
+
+export async function verifyAdminPassword(password: string, storedHash: string | null) {
+  if (!storedHash) return false;
+  const [salt, hashHex] = storedHash.split(':');
+  if (!salt || !hashHex || !/^[a-f0-9]{128}$/i.test(hashHex)) return false;
+
+  const actual = await scrypt(password, salt, 64);
+  const expected = Buffer.from(hashHex, 'hex');
+  return actual.length === expected.length && timingSafeEqual(actual, expected);
+}
+
+export function createAdminSession(userId: number) {
+  const expiresAt = Math.floor(Date.now() / 1000) + SESSION_DURATION_SECONDS;
+  const payload = `${userId}.${expiresAt}`;
+  const signature = createHmac('sha256', sessionSecret()).update(payload).digest('base64url');
+  return { value: `${payload}.${signature}`, maxAge: SESSION_DURATION_SECONDS };
+}
+
+function isValidAdminSession(value: string | undefined) {
+  if (!value) return false;
+  const [userId, expiresAt, signature, ...rest] = value.split('.');
+  if (rest.length || !/^\d+$/.test(userId || '') || !/^\d+$/.test(expiresAt || '') || !signature) return false;
+  if (Number(expiresAt) <= Math.floor(Date.now() / 1000)) return false;
+
+  try {
+    const payload = `${userId}.${expiresAt}`;
+    const expected = createHmac('sha256', sessionSecret()).update(payload).digest();
+    const provided = Buffer.from(signature, 'base64url');
+    return provided.length === expected.length && timingSafeEqual(provided, expected);
+  } catch {
+    return false;
+  }
+}
+
+export async function isAdminCookieHeader(cookieHeader: string | null) {
   const cookie = cookieHeader
     ?.split(';')
     .map((part) => part.trim())
@@ -21,7 +60,7 @@ export function isAdminCookieHeader(cookieHeader: string | null) {
   if (!cookie) return false;
 
   try {
-    return isValidAdminToken(decodeURIComponent(cookie.slice(ADMIN_COOKIE_NAME.length + 1)));
+    return isValidAdminSession(decodeURIComponent(cookie.slice(ADMIN_COOKIE_NAME.length + 1)));
   } catch {
     return false;
   }
@@ -29,5 +68,5 @@ export function isAdminCookieHeader(cookieHeader: string | null) {
 
 export async function requireAdminSession() {
   const cookieStore = await cookies();
-  return isValidAdminToken(cookieStore.get(ADMIN_COOKIE_NAME)?.value);
+  return isValidAdminSession(cookieStore.get(ADMIN_COOKIE_NAME)?.value);
 }

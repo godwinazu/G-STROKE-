@@ -6,26 +6,27 @@ import { Button } from '@/components/ui/button';
 
 export function HeroSection({ featuredArtwork }: { featuredArtwork?: { title: string; image: string } }) {
   return (
-    <section className="container-shell grid gap-12 py-16 md:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+    <section className="container-shell grid gap-12 py-12 md:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+      {/* Responsive tweaks: stack on mobile, tighten spacing */}
       <div>
         <div className="mb-5 flex items-center gap-2 text-[var(--muted)]">
           <Sparkles className="h-4 w-4 text-[var(--accent)]" />
           <span className="label">Fine graphite artist</span>
         </div>
-        <h1 className="max-w-xl text-5xl leading-[0.9] tracking-[-0.06em] md:text-7xl">
+        <h1 className="max-w-xl text-4xl leading-[1.05] tracking-[-0.06em] md:text-7xl md:leading-[0.9]">
           Drawing life into every quiet detail.
         </h1>
         <p className="mt-6 max-w-lg text-base leading-7 text-[var(--muted)]">
           Godwin Azu creates graphite studies and original works that balance realism, emotion, and tactile paper grain. Each composition is built with patience, observation, and a belief in the power of subtle detail.
         </p>
-        <div className="mt-8 flex flex-wrap gap-4">
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
           <Button>
             View selected works
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
           <Button variant="outline">Book a commission</Button>
         </div>
-        <div className="mt-10 grid max-w-xl gap-6 sm:grid-cols-3">
+        <div className="mt-8 grid max-w-xl gap-6 sm:grid-cols-3">
           {[{ value: '12+', label: 'Years of drawing' }, { value: '84', label: 'Featured works' }, { value: '4.9', label: 'Collector rating' }].map((item) => (
             <div key={item.label}>
               <p className="text-3xl font-semibold tracking-tight">{item.value}</p>

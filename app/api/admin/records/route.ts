@@ -11,7 +11,7 @@ const recordSchema = z.discriminatedUnion('type', [
 ]);
 
 export async function PATCH(request: Request) {
-  if (!isAdminCookieHeader(request.headers.get('cookie'))) {
+  if (!(await isAdminCookieHeader(request.headers.get('cookie')))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

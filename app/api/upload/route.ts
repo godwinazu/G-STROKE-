@@ -4,7 +4,7 @@ import { isAdminCookieHeader } from '@/lib/admin';
 
 export async function POST(request: Request) {
   try {
-    if (!isAdminCookieHeader(request.headers.get('cookie'))) {
+    if (!(await isAdminCookieHeader(request.headers.get('cookie')))) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

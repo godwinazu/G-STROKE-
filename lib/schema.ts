@@ -1,4 +1,5 @@
-import { pgEnum, pgTable, serial, text, timestamp, varchar, integer, boolean, decimal, jsonb } from 'drizzle-orm/pg-core';
+import { pgEnum, pgTable, serial, text, timestamp, varchar, integer, boolean, decimal, jsonb, uniqueIndex } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 
 export const roleEnum = pgEnum('role', ['admin', 'customer']);
 export const orderStatusEnum = pgEnum('order_status', ['PENDING', 'PAID', 'FULFILLED']);
@@ -28,9 +29,10 @@ export type ShippingAddress = {
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   email: varchar('email', { length: 255 }).notNull().unique(),
+  passwordHash: varchar('password_hash', { length: 255 }),
   role: roleEnum('role').notNull().default('customer'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-});
+}, (table) => [uniqueIndex('users_single_admin_idx').on(table.role).where(sql`${table.role} = 'admin'`)]);
 
 export const artworks = pgTable('artworks', {
   id: serial('id').primaryKey(),
