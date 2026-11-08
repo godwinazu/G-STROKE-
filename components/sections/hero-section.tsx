@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import portraitImage from '@/app/assets/potrait.jpeg';
 
 export function HeroSection({ featuredArtwork }: { featuredArtwork?: { title: string; image: string } }) {
   return (
@@ -57,9 +58,12 @@ export function HeroSection({ featuredArtwork }: { featuredArtwork?: { title: st
                 className="h-[620px] w-full object-cover"
               />
             ) : (
-              <div className="flex h-[620px] items-end bg-[linear-gradient(145deg,#e7e4dc,#f9f8f4_42%,#d1cec6)] p-8 text-[#111113]">
-                <p className="max-w-xs font-serif text-3xl leading-tight">A closer look at graphite, paper, and the human form.</p>
-              </div>
+              <Image
+                src={portraitImage}
+                alt="Graphite portrait by Godwin Azu"
+                priority
+                className="h-[620px] w-full object-cover"
+              />
             )}
           </div>
         </div>
