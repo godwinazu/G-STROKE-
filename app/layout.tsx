@@ -7,6 +7,9 @@ import { SiteFooter } from '@/components/site-footer';
 export const metadata: Metadata = {
   title: 'Godwin Azu | Fine Art & Graphite Studio',
   description: 'Portfolio, gallery, digital storefront, and commissions for Godwin Azu.',
+  icons: {
+    icon: '/icon.svg',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

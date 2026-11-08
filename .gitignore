@@ -1,5 +1,6 @@
 node_modules
 .next
+temp_next/
 out
 .env*
 !.env.example

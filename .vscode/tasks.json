@@ -87,6 +87,125 @@
 			],
 			"isBackground": false,
 			"problemMatcher": []
+		},
+		{
+			"label": "Remove broken favicon",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Remove-Item -Force app/favicon.ico; Write-Output 'FAVICON_REMOVED'"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Search Next template assertion",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Select-String -Path 'node_modules/next/dist/**/*.js' -Pattern 'Expected to replace all template variables' -CaseSensitive:$false | Select-Object -First 20 | Format-Table -AutoSize"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Check Next package version",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npm view next@15.5.28 version"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Inspect clean Next package",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"mkdir temp_next 2>nul & cd temp_next & npm pack next@15.5.28 --silent && tar -xf next-15.5.28.tgz && dir && findstr /s /n /c:\"VAR_ORIGINAL_PATHNAME\" package\\dist\\build\\*.js package\\dist\\build\\**\\*.js 2>nul"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Compare clean Next loader",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"cd temp_next\\package & findstr /n /c:\"VAR_ORIGINAL_PATHNAME\" dist\\build\\webpack\\loaders\\next-app-loader.js && findstr /n /c:\"VAR_ORIGINAL_PATHNAME\" dist\\build\\templates\\app-page.js"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "List temp Next files",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"cd temp_next\\package && dir /s /b | findstr /i \"next-app-loader.js|app-page.js|load-entrypoint.js\""
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Locate temp Next app loader",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"cd temp_next\\package && dir /s /b | findstr /i next-app-loader.js"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "List temp package root",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"dir temp_next\\package"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Check downloaded Next template vars",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"cd temp_next\\package & findstr /n /c:\"VAR_ORIGINAL_PATHNAME\" dist\\build\\webpack\\loaders\\next-app-loader.js & findstr /n /c:\"VAR_ORIGINAL_PATHNAME\" dist\\build\\templates\\app-page.js"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Inspect downloaded Next dist tree",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"dir \"temp_next\\package\\dist\\build\\webpack\\loaders\""
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Clean reinstall dependencies",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Remove-Item -Recurse -Force node_modules, package-lock.json, .next -ErrorAction SilentlyContinue; npm cache clean --force; npm.cmd install --no-audit --no-fund"
+			],
+			"isBackground": false
 		}
 	]
 }
